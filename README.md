@@ -34,7 +34,7 @@ The linear correlation between the income measure (“income index”) and rider
 - report/  A detailed (knitted) R markdown file
 - scripts/  R scripts used for data cleaning and analysis
 - plots/  Contains all visuals generated using ggplot2 from '01_ridership_analysis.R'
-- rawdata/ Contains all raw datasets used for this project
+- rawdata/ Contains all raw datasets used for this project ***which unfortunately cannot be uploaded to GitHub at the moment
 - cleandata/ Contains all prepared datasets using Excel, Power Query, and R
 
 ## Sources
