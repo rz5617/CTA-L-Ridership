@@ -1,8 +1,7 @@
 
-#Project: CTA L Ridership Analysis, Pre and Post COVID 
+#Project: CTA L Ridership Analysis, Pre and Post COVID Crisis
 #Author: Rachel Zhu
 #Date: 09-17-2026
-
 
 # Packages ----
 
