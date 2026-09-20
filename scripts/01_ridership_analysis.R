@@ -71,7 +71,7 @@ ggplot(monthly_ridership_post_cov, aes(x = date, y = prop_of_baseline)) +
   labs( title = "Post-onset proportion of recovery",
         x = "Year",
         y = "Proportion of 2019 baseline rides",
-        caption = "Each post-povid point is the proportion of mean daily rides per month to its corresponding month in the 2019 baseline year.") +
+        caption = "Each post-covid point is the ratio of mean daily rides per month to its corresponding month in the 2019 baseline year.") +
   theme_minimal()
 
 
