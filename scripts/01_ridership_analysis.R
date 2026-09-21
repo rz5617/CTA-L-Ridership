@@ -23,18 +23,30 @@ monthly_ridership <- master |>
   mutate(date = as.Date(format(date,"%Y-%m-01"))) |> 
   group_by(date) |> 
   summarize(monthly_rides = sum(rides), # summarized by total rides each month
-            mean_rides = round(mean(rides),2)) # mean *daily* rides
+            mean_rides = round(mean(rides),2)) # mean *daily* rides across stations
 
 monthly_ridership <- monthly_ridership |> 
   mutate(after_cov = ifelse(date < "2020-03-01","false","true")) # bisected data into two groups -- pre and post pandemic onset
 
+  ## level of decline at cutoff
+monthly_ridership |>
+  filter(date >= "2020-02-01",
+         date <= "2020-04-01") |>
+  summarize(mean_daily_decline = mean_rides[date == "2020-04-01"] - mean_rides[date == "2020-02-01"],
+            total_decline = monthly_rides[date == "2020-04-01"] - monthly_rides[date == "2020-02-01"],
+            percent_decline = (monthly_rides[date == "2020-04-01"] - monthly_rides[date == "2020-02-01"])/(monthly_rides[date == "2020-02-01"])
+            )
+
+    ### mean_daily_decline = -3028
+    ### total_decline = -10309970
+    ### percent_decline = -0.868
 
   ## plot of monthly rides
 
 ggplot(data = monthly_ridership, aes(x = date, y = mean_rides)) + 
   geom_point() +
   geom_smooth(aes(group = after_cov),se = FALSE, method = "lm") +  # creates two fitted lines for pre and post pandemic onset
-  labs(x = "Year", y = "Mean daily rides per month", title = "Mean daily CTA ridership by month from 2016 to 2024") +
+  labs(x = "Year", y = "Mean daily rides per month across stations", title = "Mean daily CTA ridership by month acros stations from 2016 to 2024") +
   theme_minimal()
 
 
@@ -58,7 +70,7 @@ monthly_baselines_2019 <- monthly_ridership |>
   ## creating new column for proportion/ratio of post-covid rides to baseline pre-covid rides
 
 monthly_ridership <- monthly_ridership |> 
-  left_join(monthly_baselines_2019, monthly_ridership, by ="month") |> 
+  left_join(monthly_baselines_2019, by ="month") |> 
   mutate(prop_of_baseline = mean_rides / baseline_rides )
 
   ## plotting recovery of CTA rides
@@ -127,7 +139,7 @@ write_xlsx(master_w_income_ind, "master_w_income_ind.xlsx")
 monthly_ridership_by_inc_grp <- master_w_income_ind |> 
   mutate(year = format(date,"%Y"),
          month = format(date,"%m")) |> 
-  group_by(station_id, station_name, income_ind, income_group, year, month) |> 
+  group_by(station_id, income_ind, income_group, year, month) |> 
   summarize(mean_rides_by_station = mean(rides,na.rm = TRUE),.groups = "drop")
 
 
@@ -161,7 +173,7 @@ write_xlsx(monthly_ridership_by_inc_grp, "monthly_ridership_by_inc_grp.xlsx")
 ggplot(monthly_ridership_by_inc_grp,
        aes(x = date, y = mean_prop_of_baseline, color = income_group)) + 
   geom_line() +
-  labs(title = "L Ridership Relative to 2019 'baseline' by Station's Census Tract Income Group",
+  labs(title = "L Ridership Relative to 2019 'baseline' by Station Area's Income Group",
        x = "Date",
        y = "Proportion of 2019 'baseline' Ridership",
        color = "Income Groups") + 
@@ -172,7 +184,7 @@ ggplot(monthly_ridership_by_inc_grp,
 ggplot(monthly_ridership_by_inc_grp,
        aes(x = date, y = mean_prop_of_baseline, color = income_ind)) + 
   geom_point() +
-  labs(title = "L Ridership Relative to 2019 'baseline' by Station's Census Tract Income Index",
+  labs(title = "L Ridership Relative to 2019 'baseline' by Station Area's Income Index",
        x = "Date",
        y = "Proportion of 2019 'baseline' Ridership",
        color = "Income Index") + 
